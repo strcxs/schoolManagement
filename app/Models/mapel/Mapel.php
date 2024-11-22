@@ -8,4 +8,5 @@ class Mapel extends Model
 {
     protected $table = 'mapel';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 }

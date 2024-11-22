@@ -9,6 +9,7 @@ class absensi extends Model
 {
     protected $table = 'absensi';
     protected $primaryKey = 'id';
+    public $timestamps = false;
     public function agenda(){
         return $this->belongsTo(Agenda::class, 'id_agenda', 'id');
     }

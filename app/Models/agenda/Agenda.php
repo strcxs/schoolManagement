@@ -11,6 +11,7 @@ class Agenda extends Model
 {
     protected $table = 'agenda';
     protected $primaryKey = 'id';
+    public $timestamps = false;
     public function kelas(){
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
     }
