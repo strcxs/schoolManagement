@@ -9,44 +9,95 @@ use Illuminate\Support\Facades\DB;
 class GuruController extends Controller
 {
     private $data;
+    
     public function index(){
         $this->data['guru'] = Guru::with('mapel')->get();
-        return view('guru.index',$this->data);
+        return view('guru.index', $this->data);
     }
-    public function edit(Request $request)
+
+    public function add(Request $request)
     {
-        // Start a database transaction
         DB::beginTransaction();
 
         try {
-            // Find the teacher (guru) by ID
+            $guru = new Guru();
+            $guru->NIP = $request->nip;
+            $guru->nama = $request->nama;
+            $guru->id_mapel = $request->mapel;
+            $guru->save();
+
+            $guru = Guru::with('mapel')->find($guru->id);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data berhasil ditambahkan',
+                'data' => $guru
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
             $guru = Guru::find($request->id);
 
-            // Check if the teacher exists
             if ($guru) {
-                // Update the teacher's name and other fields
-                $guru->nama = $request->nama;
-                $guru->id_mapel = $request->mapel;  // Assuming mapel_id is being updated
-                $guru->save(); // Save the changes
-
-                // Commit the transaction
+                $guru->delete();
                 DB::commit();
 
-                // Return a success response
                 return response()->json([
                     'status' => 200,
-                    'message' => 'Data berhasil diperbarui',
-                    'data' => $guru
+                    'message' => 'Data berhasil dihapus'
                 ]);
             } else {
-                // Rollback if the teacher is not found
                 DB::rollBack();
                 return response()->json([
                     'message' => 'Data tidak ditemukan'
                 ], 404);
             }
         } catch (\Exception $e) {
-            // Rollback the transaction in case of error
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function edit(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $guru = Guru::find($request->id);
+
+            if ($guru) {
+                $guru->nama = $request->nama;
+                $guru->id_mapel = $request->mapel;
+                $guru->save();
+                $guru = Guru::with('mapel')->find($guru->id);
+                DB::commit();
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data berhasil diperbarui',
+                    'data' => $guru
+                ]);
+            } else {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            }
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage()

@@ -3,7 +3,23 @@
 @section('content')
 <div class="container">
     <h1 class="text-center mb-4">Manajemen Guru</h1>
-
+    <form id="addGuruForm" class="mt-4 mb-2">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" id="nip" name="nip" class="form-control" placeholder="NIP" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="namaGuru" name="nama" class="form-control" placeholder="Nama Guru" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="mapel" name="mapel" class="form-control" placeholder="Mata Pelajaran" required>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-success w-100">Tambah Guru</button>
+            </div>
+        </div>
+    </form>
+    <hr>
     <!-- Tabel Daftar Guru dengan DataTables -->
     <div class="table-responsive">
         <table id="guruTable" class="table table-striped table-bordered">
@@ -38,24 +54,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Form Tambah Guru -->
-    <form id="addGuruForm" class="mt-4">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <input type="text" id="nip" name="nip" class="form-control" placeholder="NIP" required>
-            </div>
-            <div class="col-md-4">
-                <input type="text" id="namaGuru" name="namaGuru" class="form-control" placeholder="Nama Guru" required>
-            </div>
-            <div class="col-md-4">
-                <input type="text" id="mapel" name="mapel" class="form-control" placeholder="Mata Pelajaran" required>
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-success w-100">Tambah Guru</button>
-            </div>
-        </div>
-    </form>
 </div>
 
 <!-- Modal Edit Guru -->
@@ -118,27 +116,114 @@
         $('#addGuruForm').on('submit', function(e) {
             e.preventDefault();
 
-            var nip = $('#nip').val();
-            var namaGuru = $('#namaGuru').val();
-            var mapel = $('#mapel').val();
+            var form = $(this);
+            var actionUrl = "{{ route('guru.add') }}"; // URL untuk menambah guru
+            var formData = form.serialize(); // Serialize data form menjadi string
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-            if(nip && namaGuru && mapel) {
-                // Add a new row to the DataTable
-                var rowCount = table.rows().count();
-                table.row.add([
-                    nip,
-                    namaGuru,
-                    mapel,
-                    '<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" ' +
-                    'data-id="' + rowCount + '" data-nama="' + namaGuru + '" data-mapel="' + mapel + '">Edit</button>' +
-                    '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' + rowCount + '">Hapus</button>'
-                ]).draw();
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken  // Menambahkan CSRF token ke header
+                },
+                success: function (response) {
+                    // Tampilkan pesan sukses atau error menggunakan SweetAlert
+                    if (response.status == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Guru berhasil ditambahkan!',
+                            showConfirmButton: true,
+                        }).then((result) => {
+                            response = response.data
+                            console.log(response);
+                            
+                            var newRow = `<tr>
+                                <td>${response.NIP}</td>
+                                <td>${response.nama}</td>
+                                <td>${response.mapel.nama}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                        data-id="${response.id}" data-nama="${response.nama}" data-mapel="${response.mapel.id}">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.id}">
+                                        Hapus
+                                    </button>
+                                </td>
+                            </tr>`;
+                            // Tambahkan row baru ke tabel
+                            $('#guruTable tbody').append(newRow);
+                            form.trigger("reset"); // Reset form
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi kesalahan!',
+                        text: 'Silakan coba lagi nanti.'
+                    });
+                }
+            });
+        });
 
-                // Clear input fields
-                $('#nip').val('');
-                $('#namaGuru').val('');
-                $('#mapel').val('');
-            }
+        // Handle delete action
+        $(document).on('click', '.delete-btn', function () {
+            var guruId = $(this).data('id');
+            
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Anda tidak dapat mengembalikan data ini setelah dihapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('guru.delete') }}",
+                        type: 'POST',
+                        data: { id: guruId },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (response) {
+                            if (response.status == 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Data guru berhasil dihapus!',
+                                    showConfirmButton: true,
+                                }).then((result) => {
+                                    // Hapus baris dari tabel tanpa refresh halaman
+                                    $('#guruTable tbody').find('button[data-id="' + guruId + '"]').closest('tr').remove();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi kesalahan!',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: 'Silakan coba lagi nanti.'
+                            });
+                        }
+                    });
+                }
+            });
         });
 
         // Handle modal edit action
@@ -191,16 +276,17 @@
                             }).then(() => {
                                 // Close the modal
                                 $('#close').click();
-
+                                console.log(response);
+                                
                                 // Update the row in the table (for example)
                                 var updatedRow = `
                                     <tr>
                                         <td>${response.data.NIP}</td>
                                         <td>${response.data.nama}</td>
-                                        <td>${response.data.mapel_nama}</td>
+                                        <td>${response.data.mapel.nama}</td>
                                         <td>
                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-id="${response.data.id}" data-nama="${response.data.nama}" data-mapel="${response.data.mapel_nama}">
+                                                data-id="${response.data.id}" data-nama="${response.data.nama}" data-mapel="${response.data.mapel.nama}">
                                                 Edit
                                             </button>
                                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
@@ -211,11 +297,8 @@
                                 `;
                                 
                                 // Find and replace the old row with the updated one
-                                $('#kelasTable tbody tr').each(function() {
-                                    if ($(this).find('td').first().text() == guruId) {
-                                        $(this).replaceWith(updatedRow);
-                                    }
-                                });
+                                table.row($(`#guruTable tbody tr:has(td:contains(${guruId}))`)).remove().draw();
+                                table.row.add($(updatedRow)).draw();
                             });
                         },
                         error: function(xhr) {

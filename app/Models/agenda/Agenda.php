@@ -16,7 +16,7 @@ class Agenda extends Model
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
     }
     public function guru(){
-        return $this->belongsTo(Guru::class, 'id_guru', 'id');
+        return $this->belongsTo(Guru::class, 'id_guru', 'id')->with('mapel');
     }
 
 }

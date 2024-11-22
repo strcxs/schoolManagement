@@ -2,19 +2,28 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-center mb-4">Manajemen Kelas</h1>
-
-    <!-- Tabel Daftar Kelas dengan DataTables -->
+    <h1 class="text-center mb-4">Manajemen Mapel</h1>
+    <form id="addMapelForm" class="mt-4 mb-2">
+        <div class="row g-3">
+            <div class="col-md-8">
+                <input type="text" id="namaMapel" name="nama" class="form-control" placeholder="Nama Mapel" required>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-success w-100">Tambah Mapel</button>
+            </div>
+        </div>
+    </form>
+    <!-- Tabel Daftar Mapel dengan DataTables -->
     <div class="table-responsive">
-        <table id="kelasTable" class="table table-striped table-bordered">
+        <table id="mapelTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama Kelas</th>
+                    <th>Nama Mapel</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody id="kelasList">
+            <tbody id="mapelList">
                 @foreach ($mapel as $x)
                     <tr>
                         <td>{{$loop->iteration}}</td>
@@ -42,7 +51,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Kelas</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit Mapel</h5>
                     <button id="close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
@@ -50,10 +59,10 @@
                         @csrf
                         @method('POST')
                         <div class="form-group m-2">
-                            <label for="kelasNama">Nama Kelas</label>
-                            <input type="text" class="form-control" id="kelasNama" name="nama" required>
+                            <label for="mapelNama">Nama Mapel</label>
+                            <input type="text" class="form-control" id="mapelNama" name="nama" required>
                         </div>
-                        <input type="hidden" id="kelasId" name="id">
+                        <input type="hidden" id="mapelId" name="id">
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </form>
                 </div>
@@ -70,7 +79,7 @@
 <script>
     // Initialize DataTable
     $(document).ready(function() {
-        $('#kelasTable').DataTable({
+        $('#mapelTable').DataTable({
             paging: false,
             searching: false,
             "language": {
@@ -94,15 +103,15 @@
     // Setup modal data from the button click
     $('#editModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
-        var kelasId = button.data('id');
-        var kelasNama = button.data('nama');
+        var mapelId = button.data('id');
+        var mapelNama = button.data('nama');
         
         var modal = $(this);
-        modal.find('#kelasId').val(kelasId);
-        modal.find('#kelasNama').val(kelasNama);
+        modal.find('#mapelId').val(mapelId);
+        modal.find('#mapelNama').val(mapelNama);
         
         var actionUrl = "{{ route('mapel.edit', ':id') }}";
-        actionUrl = actionUrl.replace(':id', kelasId);
+        actionUrl = actionUrl.replace(':id', mapelId);
         modal.find('#editForm').attr('action', actionUrl);
     });
 
@@ -112,7 +121,7 @@
 
         var form = $(this);
         var actionUrl = form.attr('action');
-        var formData = form.serialize(); 
+        var formData = form.serialize();
 
         $.ajax({
             url: actionUrl,
@@ -122,24 +131,25 @@
                 if (response.status == 200) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Data kelas berhasil diperbarui!',
+                        title: 'Data mapel berhasil diperbarui!',
                         showConfirmButton: true,
                     }).then((result) => {
+                        response = response.data
                         var updatedRow = `<tr>
-                            <td>${response.kelas_id}</td>
-                            <td>${response.kelas_nama}</td>
+                            <td>${response.id}</td>
+                            <td>${response.nama}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                    data-id="${response.kelas_id}" data-nama="${response.kelas_nama}">
+                                    data-id="${response.id}" data-nama="${response.nama}">
                                     Edit
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.kelas_id}">
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.id}">
                                     Hapus
                                 </button>
                             </td>
                         </tr>`;
-                        $('#kelasTable tbody tr').each(function() {
-                            if ($(this).find('td').first().text() == response.kelas_id) {
+                        $('#mapelTable tbody tr').each(function() {
+                            if ($(this).find('td').first().text() == response.id) {
                                 $(this).replaceWith(updatedRow);
                             }
                         });
@@ -164,8 +174,8 @@
     });
 
     // SweetAlert for delete confirmation
-    $('.delete-btn').on('click', function () {
-        var kelasId = $(this).data('id');
+    $(document).on('click', '.delete-btn', function () {
+        var mapelId = $(this).data('id');
         
         Swal.fire({
             title: 'Apakah Anda yakin?',
@@ -180,24 +190,99 @@
                 // Perform delete operation (you need to send a delete request here)
                 // Example of a delete AJAX request (or a form submit for delete):
                 $.ajax({
-                    url: `/kelas/${kelasId}`,  // Adjust the URL to your route
-                    type: 'DELETE',
-                    success: function(response) {
+                    url: "{{ route('mapel.delete') }}",
+                    type: 'POST',
+                    data: { id: mapelId },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
                         if (response.status == 200) {
-                            Swal.fire(
-                                'Dihapus!',
-                                'Data kelas telah dihapus.',
-                                'success'
-                            );
-                            $(`button[data-id="${kelasId}"]`).closest('tr').remove();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Data mapel berhasil dihapus!',
+                                showConfirmButton: true,
+                            }).then((result) => {
+                                // Hapus row dari tabel
+                                $('#mapelTable tbody tr').each(function() {
+                                    if ($(this).find('td').first().text() == mapelId) {
+                                        $(this).remove();
+                                    }
+                                });
+                            });
                         } else {
-                            Swal.fire(
-                                'Gagal!',
-                                'Terjadi kesalahan saat menghapus data.',
-                                'error'
-                            );
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: response.message
+                            });
                         }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: 'Silakan coba lagi nanti.'
+                        });
                     }
+                });
+            }
+        });
+    });
+
+    // Submit add form using Ajax
+    $('#addMapelForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent normal form submission
+
+        var form = $(this);
+        var actionUrl = "{{ route('mapel.add') }}"; // URL untuk menambah mapel
+        var formData = form.serialize(); 
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken  // Menambahkan CSRF token ke header
+            },
+            success: function (response) {
+                if (response.status == 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data mapel berhasil ditambahkan!',
+                        showConfirmButton: true,
+                    }).then((result) => {
+                        response = response.data;
+                        var newRow = `<tr>
+                            <td>${response.id}</td>
+                            <td>${response.nama}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                    data-id="${response.id}" data-nama="${response.nama}">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.id}">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>`;
+                        $('#mapelTable tbody').append(newRow);
+                        form.trigger("reset"); // Reset form
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi kesalahan!',
+                        text: response.message
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi kesalahan!',
+                    text: 'Silakan coba lagi nanti.'
                 });
             }
         });

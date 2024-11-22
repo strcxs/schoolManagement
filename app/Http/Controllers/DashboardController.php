@@ -20,9 +20,7 @@ class DashboardController extends Controller
             $update = Kelas::find($request->id);
             if ($update) {
                 $update->nama = $request->nama;
-                // \DB::enableQueryLog();
                 $update->save();
-                // dd(\DB::getQueryLog());
                 DB::commit();
                 return response()->json(['status'=>200, 'message' => 'Data berhasil diperbarui','data' => $update]);
             } else {
@@ -33,5 +31,39 @@ class DashboardController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 500);
         }   
+    }
+
+    public function add(Request $request){
+        // Menambahkan data kelas baru
+        DB::beginTransaction();
+        try {
+            $kelas = new Kelas();
+            $kelas->nama = $request->nama;
+            $kelas->save();
+            DB::commit();
+            return response()->json(['status'=>200, 'message' => 'Data kelas berhasil ditambahkan', 'data' => $kelas]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function delete(Request $request){
+        // Menghapus data kelas
+        DB::beginTransaction();
+        try {
+            $kelas = Kelas::find($request->id);
+            if ($kelas) {
+                $kelas->delete();
+                DB::commit();
+                return response()->json(['status'=>200, 'message' => 'Data kelas berhasil dihapus']);
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }

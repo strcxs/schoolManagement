@@ -4,16 +4,16 @@
 <div class="container">
     <h1 class="text-center mb-4">Manajemen Kelas</h1>
     <!-- Form Tambah Kelas -->
-    {{-- <form id="addKelasForm" class="mt-4">
+    <form id="addKelasForm" class="mt-4 mb-2">
         <div class="row g-3">
             <div class="col-md-8">
-                <input type="text" id="namaKelas" name="namaKelas" class="form-control" placeholder="Nama Kelas" required>
+                <input type="text" id="namaKelas" name="nama" class="form-control" placeholder="Nama Kelas" required>
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-success w-100">Tambah Kelas</button>
             </div>
         </div>
-    </form> --}}
+    </form>
 
     <!-- Tabel Daftar Kelas dengan DataTables -->
     <div class="table-responsive">
@@ -138,22 +138,23 @@
                         title: 'Data kelas berhasil diperbarui!',
                         showConfirmButton: true,
                     }).then((result) => {
+                        response = response.data;
                         var updatedRow = `<tr>
-                            <td>${response.kelas_id}</td>
-                            <td>${response.kelas_nama}</td>
+                            <td>${response.id}</td>
+                            <td>${response.nama}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                    data-id="${response.kelas_id}" data-nama="${response.kelas_nama}">
+                                    data-id="${response.id}" data-nama="${response.nama}">
                                     Edit
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.kelas_id}">
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.id}">
                                     Hapus
                                 </button>
                             </td>
                         </tr>`;
                         // Temukan row yang sesuai dan update
                         $('#kelasTable tbody tr').each(function() {
-                            if ($(this).find('td').first().text() == response.kelas_id) {
+                            if ($(this).find('td').first().text() == response.id) {
                                 $(this).replaceWith(updatedRow);
                             }
                         });
@@ -179,10 +180,9 @@
     });
 
     // Menggunakan SweetAlert untuk konfirmasi hapus
-    $('.delete-btn').on('click', function () {
+    $(document).on('click', '.delete-btn', function () {
         var kelasId = $(this).data('id');
-        var form = $(this).closest('form'); // Mengambil form terdekat (form hapus)
-
+        
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Anda tidak dapat mengembalikan data ini setelah dihapus!",
@@ -193,8 +193,99 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Jika konfirmasi, submit form
-                form.submit();
+                $.ajax({
+                    url: "{{ route('kelas.delete') }}",
+                    type: 'GET',
+                    data: { id: kelasId },
+                    success: function (response) {
+                        if (response.status == 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Data kelas berhasil dihapus!',
+                                showConfirmButton: true,
+                            }).then((result) => {
+                                // Hapus row dari tabel
+                                $('#kelasTable tbody tr').each(function() {
+                                    if ($(this).find('td').first().text() == kelasId) {
+                                        $(this).remove();
+                                    }
+                                });
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: 'Silakan coba lagi nanti.'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    // Menambahkan kelas baru dengan AJAX dan SweetAlert
+    $('#addKelasForm').on('submit', function (e) {
+        e.preventDefault(); // Mencegah form submit secara normal
+
+        var form = $(this);
+        var actionUrl = "{{ route('kelas.add') }}"; // URL untuk menambah kelas
+        var formData = form.serialize(); // Serialize data form menjadi string
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+        
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken  // Menambahkan CSRF token ke header
+            },
+            success: function (response) {
+                // Tampilkan pesan sukses atau error menggunakan SweetAlert
+                if (response.status == 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Kelas berhasil ditambahkan!',
+                        showConfirmButton: true,
+                    }).then((result) => {
+                        var newRow = `<tr>
+                            <td>${response.kelas_id}</td>
+                            <td>${response.kelas_nama}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                    data-id="${response.kelas_id}" data-nama="${response.kelas_nama}">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.kelas_id}">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>`;
+                        // Tambahkan row baru ke tabel
+                        $('#kelasTable tbody').append(newRow);
+                        form.trigger("reset"); // Reset form
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi kesalahan!',
+                        text: response.message
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi kesalahan!',
+                    text: 'Silakan coba lagi nanti.'
+                });
             }
         });
     });
