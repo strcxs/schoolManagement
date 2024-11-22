@@ -18,8 +18,8 @@
                 @foreach ($guru as $x)
                     <tr>
                         <td>{{$x->NIP}}</td>
-                        <td>{{$x->Nama}}</td>
-                        <td>{{$x->mapel->Nama}}</td>
+                        <td>{{$x->nama}}</td>
+                        <td>{{$x->mapel->nama}}</td>
                     </tr>
                 @endforeach
             </tbody>

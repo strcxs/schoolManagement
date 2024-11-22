@@ -18,8 +18,8 @@
                 @foreach ($siswa as $x)
                     <tr>
                         <td>{{$x->NIS}}</td>
-                        <td>{{$x->Nama}}</td>
-                        <td>{{$x->kelas->Nama}}</td>
+                        <td>{{$x->nama}}</td>
+                        <td>{{$x->kelas->nama}}</td>
                     </tr>
                 @endforeach
             </tbody>

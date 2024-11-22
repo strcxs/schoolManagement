@@ -29,14 +29,14 @@
                 @foreach ($kelas as $x)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$x->Nama}}</td>
+                        <td>{{$x->nama}}</td>
                         <td> <!-- Kolom tombol aksi -->
                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" 
-                                data-id="{{ $x->Id }}" data-nama="{{ $x->Nama }}">
+                                data-id="{{ $x->id }}" data-nama="{{ $x->nama }}">
                                 Edit
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $x->Id }}">
+                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $x->id }}">
                                 Hapus
                             </button>
                         </td>
@@ -52,7 +52,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Kelas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    <button id="close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editForm" action="{{ route('kelas.edit', 0) }}" method="POST">
@@ -137,29 +137,29 @@
                         icon: 'success',
                         title: 'Data kelas berhasil diperbarui!',
                         showConfirmButton: true,
-                        timer: 1500
+                    }).then((result) => {
+                        var updatedRow = `<tr>
+                            <td>${response.kelas_id}</td>
+                            <td>${response.kelas_nama}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                    data-id="${response.kelas_id}" data-nama="${response.kelas_nama}">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.kelas_id}">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>`;
+                        // Temukan row yang sesuai dan update
+                        $('#kelasTable tbody tr').each(function() {
+                            if ($(this).find('td').first().text() == response.kelas_id) {
+                                $(this).replaceWith(updatedRow);
+                            }
+                        });
+                        // $('#editModal').modal('hide'); 
+                        $('#close').click(); 
                     });
-                    // Update data kelas di tabel tanpa reload halaman
-                    var updatedRow = `<tr>
-                        <td>${response.kelas_id}</td>
-                        <td>${response.kelas_nama}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                data-id="${response.kelas_id}" data-nama="${response.kelas_nama}">
-                                Edit
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.kelas_id}">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>`;
-                    // Temukan row yang sesuai dan update
-                    $('#kelasTable tbody tr').each(function() {
-                        if ($(this).find('td').first().text() == response.kelas_id) {
-                            $(this).replaceWith(updatedRow);
-                        }
-                    });
-                    $('#editModal').modal('hide'); // Menutup modal setelah update
                 } else {
                     Swal.fire({
                         icon: 'error',

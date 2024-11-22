@@ -24,10 +24,10 @@
                     @foreach ($x->agenda->kelas->siswa as $siswa)
                         <tr>
                             <td>{{$siswa->NIS}}</td>
-                            <td>{{$siswa->Nama}}</td>
-                            <td>{{$siswa->kelas->Nama}}</td>
-                            <td>{{$x->agenda->guru->Nama}}</td>
-                            <td>{{$x->agenda->guru->mapel->Nama}}</td>
+                            <td>{{$siswa->nama}}</td>
+                            <td>{{$siswa->kelas->nama}}</td>
+                            <td>{{$x->agenda->guru->nama}}</td>
+                            <td>{{$x->agenda->guru->mapel->nama}}</td>
                             @php
                                 $izin = "";
                                 $sakit = "";
@@ -35,7 +35,7 @@
                             @endphp
                             <!-- izin -->
                             @foreach ($absensi as $absen)
-                                @if ($absen->Izin == $siswa->Id)
+                                @if ($absen->izin == $siswa->id)
                                     @php
                                     $izin = "✔";
                                     @endphp
@@ -45,7 +45,7 @@
                             <td>{{$izin}}</td>
                             <!-- sakit -->
                             @foreach ($absensi as $absen)
-                                @if ($absen->Sakit == $siswa->Id)
+                                @if ($absen->sakit == $siswa->id)
                                     @php
                                     $sakit = "✔";
                                     @endphp
@@ -55,7 +55,7 @@
                             <td>{{$sakit}}</td>
                             <!-- tidak hadir -->
                             @foreach ($absensi as $absen)
-                                @if ($absen->Tidak_Hadir == $siswa->Id)
+                                @if ($absen->tidak_hadir == $siswa->id)
                                     @php
                                     $tidak_hadir = "✔";
                                     @endphp

@@ -17,7 +17,7 @@
                 @foreach ($role as $x)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$x->Nama}}</td>
+                        <td>{{$x->nama}}</td>
                     </tr>
                 @endforeach
             </tbody>

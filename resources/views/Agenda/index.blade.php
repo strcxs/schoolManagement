@@ -20,9 +20,9 @@
                 @foreach ($agenda as $x)
                     <tr>
                         <td>{{$x->guru->NIP}}</td>
-                        <td>{{$x->guru->Nama}}</td>
-                        <td>{{$x->guru->mapel->Nama}}</td>
-                        <td>{{$x->kelas->Nama}}</td>
+                        <td>{{$x->guru->nama}}</td>
+                        <td>{{$x->guru->mapel->nama}}</td>
+                        <td>{{$x->kelas->nama}}</td>
                         <td>{{$x->time_start}}</td>
                         <td>{{$x->time_end}}</td>
                     </tr>

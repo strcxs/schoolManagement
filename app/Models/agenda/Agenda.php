@@ -12,10 +12,10 @@ class Agenda extends Model
     protected $table = 'agenda';
     protected $primaryKey = 'id';
     public function kelas(){
-        return $this->belongsTo(Kelas::class, 'Id_Kelas', 'Id');
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
     }
     public function guru(){
-        return $this->belongsTo(Guru::class, 'Id_Guru', 'Id');
+        return $this->belongsTo(Guru::class, 'id_guru', 'id');
     }
 
 }

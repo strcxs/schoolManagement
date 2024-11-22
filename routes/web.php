@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AgendaController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GuruController;
-use App\Http\Controllers\MapelController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\MapelController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');

@@ -10,6 +10,6 @@ class Siswa extends Model
     protected $table = 'siswa';
     protected $primaryKey = 'id';
     public function kelas(){
-        return $this->belongsTo(Kelas::class, 'Id_Kelas', 'Id');
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
     }
 }
