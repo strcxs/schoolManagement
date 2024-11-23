@@ -44,7 +44,7 @@
             </thead>
             <tbody id="agendaList">
                 @foreach ($agenda as $x)
-                    <tr>
+                    <tr style="background-color: {{ $x->status == 1 ? 'rgb(149, 255, 139)' : 'white' }}">
                         <td>{{$x->guru->NIP}}</td>
                         <td>{{$x->guru->nama}}</td>
                         <td>{{$x->guru->mapel->nama}}</td>
@@ -62,6 +62,11 @@
                             <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $x->id }}">
                                 Hapus
                             </button>
+
+                            <!-- Mengajar Button -->
+                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
+                                Mengajar
+                            </a>
                         </td>
                     </tr>
                 @endforeach
@@ -159,7 +164,7 @@
                             }).then((result) => {
                                 console.log(response.data);
                                 
-                                var newRow = `<tr>
+                                var newRow = `<tr style="background-color: ${response.data.status == 1 ? 'green' : 'white'}">
                                     <td>${response.data.guru.NIP}</td>
                                     <td>${response.data.guru.nama}</td>
                                     <td>${response.data.guru.mapel.nama}</td>
@@ -174,6 +179,9 @@
                                         <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
                                             Hapus
                                         </button>
+                                        <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
+                                            Mengajar
+                                        </a>
                                     </td>
                                 </tr>`;
                                 // Tambahkan row baru ke tabel
@@ -262,7 +270,7 @@
                                     
                                     // Update the row in the table (for example)
                                     var updatedRow = `
-                                        <tr>
+                                        <tr style="background-color: ${response.data.status == 1 ? 'green' : 'white'}">
                                             <td>${response.data.guru.NIP}</td>
                                             <td>${response.data.guru.nama}</td>
                                             <td>${response.data.guru.mapel.nama}</td>
@@ -277,6 +285,9 @@
                                                 <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
                                                     Hapus
                                                 </button>
+                                                <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
+                                                    Mengajar
+                                                </a>
                                             </td>
                                         </tr>
                                     `;

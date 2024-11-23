@@ -9,11 +9,20 @@ class AbsensiController extends Controller
 {
     private $data;
     public function index(){
-        $this->data['show'] = Absensi::select('id_agenda')
-        ->groupBy('id_agenda')
+        $results = Absensi::selectRaw(
+            'absensi.id_agenda, 
+             agenda.time_start, 
+             agenda.time_end, 
+             COUNT(CASE WHEN izin IS NOT NULL THEN 1 END) as izin,
+             COUNT(CASE WHEN sakit IS NOT NULL THEN 1 END) as sakit,
+             COUNT(CASE WHEN tidak_hadir IS NOT NULL THEN 1 END) as tidak_hadir'
+        )
+        ->join('agenda', 'agenda.id', '=', 'absensi.id_agenda') // Menggabungkan tabel 'absensi' dan 'agenda'
+        ->groupBy('absensi.id_agenda', 'agenda.time_start', 'agenda.time_end') // Mengelompokkan berdasarkan id_agenda dan kolom yang ingin dipilih dari 'agenda'
         ->get();
-
-        $this->data['absensi'] = absensi::with('agenda')->get();
+        
+        $this->data['absensi'] = $results;
+        // $this->data['absensi'] = absensi::with('agenda')->get();
         return view('Absensi.index', $this->data);
     }
 }

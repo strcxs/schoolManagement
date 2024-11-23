@@ -9,78 +9,33 @@
         <table id="kelasTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th>NIS</th>
-                    <th>Nama</th>
                     <th>Kelas</th>
-                    <th>Guru</th>
+                    <th>time start</th>
+                    <th>time end</th>
                     <th>Mata Pelajaran</th>
+                    <th>Guru</th>
                     <th>Izin</th>
                     <th>Sakit</th>
                     <th>Tidak Hadir</th>
                 </tr>
             </thead>
             <tbody id="kelasList">
-                @foreach ($show as $x)
-                    @foreach ($x->agenda->kelas->siswa as $siswa)
-                        <tr>
-                            <td>{{$siswa->NIS}}</td>
-                            <td>{{$siswa->nama}}</td>
-                            <td>{{$siswa->kelas->nama}}</td>
-                            <td>{{$x->agenda->guru->nama}}</td>
-                            <td>{{$x->agenda->guru->mapel->nama}}</td>
-                            @php
-                                $izin = "";
-                                $sakit = "";
-                                $tidak_hadir = "";
-                            @endphp
-                            <!-- izin -->
-                            @foreach ($absensi as $absen)
-                                @if ($absen->izin == $siswa->id)
-                                    @php
-                                    $izin = "✔";
-                                    @endphp
-                                    @break
-                                @endif
-                            @endforeach
-                            <td>{{$izin}}</td>
-                            <!-- sakit -->
-                            @foreach ($absensi as $absen)
-                                @if ($absen->sakit == $siswa->id)
-                                    @php
-                                    $sakit = "✔";
-                                    @endphp
-                                    @break
-                                @endif
-                            @endforeach
-                            <td>{{$sakit}}</td>
-                            <!-- tidak hadir -->
-                            @foreach ($absensi as $absen)
-                                @if ($absen->tidak_hadir == $siswa->id)
-                                    @php
-                                    $tidak_hadir = "✔";
-                                    @endphp
-                                    @break
-                                @endif
-                            @endforeach
-                            <td>{{$tidak_hadir}}</td>
-                        </tr>
-                    @endforeach
+                @foreach ($absensi as $x)
+                <tr>
+                    <td>{{$x->agenda->kelas->nama}}</td>
+                    <td>{{$x->time_start}}</td>
+                    <td>{{$x->time_end}}</td>
+                    <td>{{$x->agenda->guru->mapel->nama}}</td>
+                    <td>{{$x->agenda->guru->nama}}</td>
+
+                    <td>{{$x->izin}}</td>
+                    <td>{{$x->sakit}}</td>
+                    <td>{{$x->tidak_hadir}}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-
-    <!-- Form Tambah Kelas -->
-    <form id="addKelasForm" class="mt-4">
-        <div class="row g-3">
-            <div class="col-md-8">
-                <input type="text" id="namaKelas" name="namaKelas" class="form-control" placeholder="Nama Kelas" required>
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-success w-100">Tambah Mata Pelajaran</button>
-            </div>
-        </div>
-    </form>
 </div>
 @endsection
 

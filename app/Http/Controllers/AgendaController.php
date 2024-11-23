@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas\Kelas;
+use App\Models\Siswa\Siswa;
 use Illuminate\Http\Request;
 use App\Models\agenda\Agenda;
+use App\Models\Absensi\absensi;
 use Illuminate\Support\Facades\DB;
 
 class AgendaController extends Controller
@@ -15,6 +18,60 @@ class AgendaController extends Controller
                                 ->with('guru')
                                 ->get();
         return view('agenda.index', $this->data);
+    }
+
+    public function absensi($data){
+        $decoded_data = base64_decode($data);
+        $decoded_data = json_decode($decoded_data, true);
+        
+        $id_kelas = $decoded_data['id_kelas']; 
+        $id_agenda = $decoded_data['id_agenda'];
+
+        $this->data['agenda'] = Agenda::where('id_kelas','=',$id_kelas)->where('id','=',$id_agenda)->first();
+        $this->data['siswa'] = Siswa::with('kelas')->where('id_kelas','=',$id_kelas)->get();
+        return view('agenda.absensi', $this->data);
+    }
+
+    public function save(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($request->get('kehadiranData') as $data) {
+                $dataObj = (object)$data;
+                if (isset($dataObj->sakit)) {
+                    $absensi = new absensi();
+                    $absensi->id_agenda = $request->get('id_agenda');
+                    $absensi->sakit = $dataObj->NIS; 
+                    $absensi->save();
+                }
+                if (isset($dataObj->izin)) {
+                    $absensi = new absensi();
+                    $absensi->id_agenda = $request->get('id_agenda');
+                    $absensi->izin = $dataObj->NIS;
+                    $absensi->save();
+                }
+                if (isset($dataObj->tidak_hadir)) {
+                    $absensi = new absensi();
+                    $absensi->id_agenda = $request->get('id_agenda');
+                    $absensi->tidak_hadir = $dataObj->NIS;
+                    $absensi->save();
+                }
+            }
+            $agenda = Agenda::find($request->get('id_agenda'));
+            $agenda->status = 1;
+            $agenda->save();
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Absensi berhasil',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function add(Request $request)
@@ -93,7 +150,7 @@ class AgendaController extends Controller
                 $agenda = Agenda::with('kelas')
                 ->with('guru')
                 ->find($agenda->id);
-                
+
                 DB::commit();
 
                 return response()->json([

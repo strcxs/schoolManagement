@@ -46,11 +46,16 @@ Route::prefix('agenda')->group(function(){
     Route::post('/edit',[AgendaController::class,'edit'])->name('agenda.edit');
     Route::post('/add',[AgendaController::class,'add'])->name('agenda.add');
     Route::post('/delete',[AgendaController::class,'delete'])->name('agenda.delete');
+    
+    Route::get('/absensi/{data}',[AgendaController::class,'absensi'])->name('agenda.absensi');
+    Route::post('/absensi/save',[AgendaController::class,'save'])->name('agenda.save');
 });
 
 Route::prefix('role')->group(function(){
     Route::get('/',[RoleController::class,'index'])->name('role.index');
     Route::post('/edit',[RoleController::class,'edit'])->name('role.edit');
+    Route::post('/add',[RoleController::class,'add'])->name('role.add');
+    Route::post('/delete',[RoleController::class,'delete'])->name('role.delete');
 });
 
 Route::prefix('absensi')->group(function(){

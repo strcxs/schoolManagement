@@ -11,6 +11,6 @@ class absensi extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
     public function agenda(){
-        return $this->belongsTo(Agenda::class, 'id_agenda', 'id');
+        return $this->belongsTo(Agenda::class, 'id_agenda', 'id')->with('kelas')->with('guru');
     }
 }
