@@ -78,7 +78,12 @@
                     </div>
                     <div class="form-group m-2">
                         <label for="siswaKelas">Kelas</label>
-                        <input type="text" class="form-control" id="siswaKelas" name="kelas" required>
+                        <select id="siswaKelas" name="kelas" class="form-control" required>
+                            <option value="" disabled selected>--select--</option>
+                            @foreach ($kelass as $kelas)
+                                <option value="{{$kelas->id}}">{{$kelas->nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <input type="hidden" id="siswaId" name="id">
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>

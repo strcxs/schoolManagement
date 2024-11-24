@@ -108,11 +108,21 @@
                     @method('POST')
                     <div class="form-group m-2">
                         <label for="guruId">Guru</label>
-                        <input type="text" class="form-control" id="guruId" name="guru" required>
+                        <select id="guruId" name="guru" class="form-control" required>
+                            <option value="" disabled selected>--select--</option>
+                            @foreach ($gurus as $guru)
+                                <option value="{{$guru->id}}">{{$guru->mapel->nama}} - {{$guru->nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group m-2">
                         <label for="kelasId">Kelas</label>
-                        <input type="text" class="form-control" id="kelasId" name="kelas" required>
+                        <select id="kelasId" name="kelas" class="form-control" required>
+                            <option value="" disabled selected>--select--</option>
+                            @foreach ($kelass as $kelas)
+                                <option value="{{$kelas->id}}">{{$kelas->nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group m-2">
                         <label for="timeStart">Time Start</label>

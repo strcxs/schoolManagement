@@ -79,7 +79,12 @@
                     </div>
                     <div class="form-group m-2">
                         <label for="guruMapel">Mata Pelajaran</label>
-                        <input type="text" class="form-control" id="guruMapel" name="mapel" required>
+                        <select id="guruMapel" name="mapel" class="form-control" required>
+                            <option value="" disabled selected>--select--</option>
+                            @foreach ($mapels as $mapel)
+                                <option value="{{$mapel->id}}">{{$mapel->nama}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <input type="hidden" id="guruId" name="id">
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
