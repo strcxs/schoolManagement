@@ -29,6 +29,8 @@ class AgendaController extends Controller
                     ->with('guru')
                     ->where('id_guru','=',$id_guru)
                     ->get();
+            $this->data['gurus'] = Guru::with('mapel')->get();
+            $this->data['kelass'] = Kelas::get();
         }
         return view('agenda.index', $this->data);
     }
@@ -154,30 +156,36 @@ class AgendaController extends Controller
 
         try {
             $agenda = Agenda::find($request->id);
-
-            if ($agenda) {
-                $agenda->id_guru = $request->input('guru');
-                $agenda->id_kelas = $request->input('kelas');
-                $agenda->time_start = $request->input('time_start');
-                $agenda->time_end = $request->input('time_end');
-                $agenda->save();
-
-                $agenda = Agenda::with('kelas')
-                ->with('guru')
-                ->find($agenda->id);
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Agenda berhasil diperbarui',
-                    'data' => $agenda
-                ]);
-            } else {
+            if ($agenda->status != 1) {
+                if ($agenda) {
+                    $agenda->id_guru = $request->input('guru');
+                    $agenda->id_kelas = $request->input('kelas');
+                    $agenda->time_start = $request->input('time_start');
+                    $agenda->time_end = $request->input('time_end');
+                    $agenda->save();
+    
+                    $agenda = Agenda::with('kelas')
+                    ->with('guru')
+                    ->find($agenda->id);
+    
+                    DB::commit();
+    
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Agenda berhasil diperbarui',
+                        'data' => $agenda
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json([
+                        'message' => 'Agenda tidak ditemukan'
+                    ], 404);
+                }
+            } else{
                 DB::rollBack();
-                return response()->json([
-                    'message' => 'Agenda tidak ditemukan'
-                ], 404);
+                    return response()->json([
+                        'message' => 'Agenda tidak dapat di edit'
+                    ], 404);
             }
         } catch (\Exception $e) {
             DB::rollBack();
