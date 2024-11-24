@@ -3,9 +3,9 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-center mb-4">Manajemen Role</h1>
+    <h1 class="text-center mb-4">User Role</h1>
     <!-- Form Tambah Role -->
-    <form id="addRoleForm" class="mt-4 mb-2">
+    {{-- <form id="addRoleForm" class="mt-4 mb-2">
         <div class="row g-3">
             <div class="col-md-8">
                 <input type="text" id="namaRole" name="nama" class="form-control" placeholder="Nama Role" required>
@@ -14,7 +14,7 @@
                 <button type="submit" class="btn btn-success w-100">Tambah Role</button>
             </div>
         </div>
-    </form>
+    </form> --}}
     <!-- Tabel Daftar Role dengan DataTables -->
     <div class="table-responsive">
         <table id="roleTable" class="table table-striped table-bordered">

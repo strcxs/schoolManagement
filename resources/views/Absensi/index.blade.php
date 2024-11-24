@@ -17,6 +17,7 @@
                     <th>Izin</th>
                     <th>Sakit</th>
                     <th>Tidak Hadir</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="kelasList">
@@ -31,6 +32,11 @@
                     <td>{{$x->izin}}</td>
                     <td>{{$x->sakit}}</td>
                     <td>{{$x->tidak_hadir}}</td>
+                    <td>
+                        <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->agenda->kelas->id, 'id_agenda' => $x->id_agenda]))) }}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i> lihat
+                        </a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

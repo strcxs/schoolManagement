@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\guru\Guru;
 use App\Models\Kelas\Kelas;
 use App\Models\Siswa\Siswa;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\agenda\Agenda;
 use App\Models\Absensi\absensi;
@@ -14,9 +16,19 @@ class AgendaController extends Controller
     private $data;
 
     public function index(){
-        $this->data['agenda'] = Agenda::with('kelas')
-                                ->with('guru')
-                                ->get();
+        $id_guru = Auth::user()->id_guru; 
+        if (Auth::user()->role->nama === "admin") {
+            $this->data['agenda'] = Agenda::with('kelas')
+                    ->with('guru')
+                    ->get();
+            $this->data['gurus'] = Guru::with('mapel')->get();
+            $this->data['kelass'] = Kelas::get();
+        } else{
+            $this->data['agenda'] = Agenda::with('kelas')
+                    ->with('guru')
+                    ->where('id_guru','=',$id_guru)
+                    ->get();
+        }
         return view('agenda.index', $this->data);
     }
 
@@ -29,6 +41,7 @@ class AgendaController extends Controller
 
         $this->data['agenda'] = Agenda::where('id_kelas','=',$id_kelas)->where('id','=',$id_agenda)->first();
         $this->data['siswa'] = Siswa::with('kelas')->where('id_kelas','=',$id_kelas)->get();
+        $this->data['absensi'] = absensi::where('id_agenda','=',$id_agenda)->get();
         return view('agenda.absensi', $this->data);
     }
 
@@ -36,6 +49,7 @@ class AgendaController extends Controller
     {
         DB::beginTransaction();
         try {
+            absensi::where('id_agenda','=',$request->get('id_agenda'))->delete();
             foreach ($request->get('kehadiranData') as $data) {
                 $dataObj = (object)$data;
                 if (isset($dataObj->sakit)) {

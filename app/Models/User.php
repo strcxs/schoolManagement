@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\guru\Guru;
+use App\Models\Role\Role;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -44,5 +46,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @return bool
+     */
+    public $timestamps = false;
+
+    /**
+     * Define the relationship with the Guru model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function guru()
+    {
+        return $this->belongsTo(Guru::class, 'id_guru','id');
+    }
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'id_role','id');
     }
 }

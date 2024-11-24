@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas\Kelas;
 use App\Models\Siswa\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ class SiswaController extends Controller
 
     public function index(){
         $this->data['siswa'] = Siswa::with('kelas')->get();
+        $this->data['kelass'] = Kelas::get();
         return view('siswa.index', $this->data);
     }
 

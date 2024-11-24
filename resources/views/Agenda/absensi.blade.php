@@ -23,14 +23,15 @@
                     <td>{{$x->nama}}</td>
                     <td>{{$x->kelas->nama}}</td>
                     <td>
-                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="izin{{$x->NIS}}" value="izin">
+                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="izin{{$x->NIS}}" value="izin" @if ($absensi->contains('izin', $x->id)) checked @endif @if(Auth::user()->role->nama == "admin") disabled @endif>
                         <input hidden type="text" id="id{{$x->NIS}}" value="{{$x->id}}">
                     </td>
+                    
                     <td>
-                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="sakit{{$x->NIS}}" value="sakit">
+                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="sakit{{$x->NIS}}" value="sakit" @if ($absensi->contains('sakit', $x->id)) checked @endif @if(Auth::user()->role->nama == "admin") disabled @endif>
                     </td>
                     <td>
-                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="tidak_hadir{{$x->NIS}}" value="tidak_hadir">
+                        <input class="form-check-input kehadiran-checkbox" type="checkbox" name="kehadiran{{$x->NIS}}" id="tidak_hadir{{$x->NIS}}" value="tidak_hadir" @if ($absensi->contains('tidak_hadir', $x->id)) checked @endif @if(Auth::user()->role->nama == "admin") disabled @endif>
                     </td>
                     <script>
                         document.querySelectorAll('.kehadiran-checkbox').forEach(function(checkbox) {
@@ -50,7 +51,9 @@
             </tbody>
         </table>
     </div>
+    @if(Auth::user()->role->nama != "admin")
     <button id="saveChanges" class="btn btn-primary float-end">Simpan Perubahan</button>
+    @endif
 </div>
 @endsection
 

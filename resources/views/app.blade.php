@@ -50,10 +50,42 @@
 </head>
 <body>
 
+    <!-- Navbar untuk User Info -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            {{-- <a class="navbar-brand" href="#">SMK PUSDIKHUBAD</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button> --}}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ Auth::user()->guru->nama }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+                            <form id="logout-form" action="{{route('logout')}}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Sidebar -->
     <div class="sidebar">
-        <h4 class="text-center text-white">Sidebar</h4>
+        <div class="image-container">
+            <img src="https://ebc-didactic.com/wp-content/uploads/2023/01/smk-pusdikhub-cimahi.webp" style="width: 80px;" alt="Logo" class="center-image">
+            <a class="navbar-brand mt-3" href="#">SMK PUSDIKHUBAD</a>
+        </div>
+        <hr>
         <ul class="nav flex-column">
+            @if (Auth::user()->role->nama === "admin")
             <li class="nav-item">
                 <a class="nav-link {{ Route::currentRouteName() == 'kelas.index' ? 'bg-primary':''}}" href={{route('kelas.index')}}><i class="fas fa-school"></i> Kelas</a>
             </li>
@@ -67,45 +99,17 @@
                 <a class="nav-link {{ Route::currentRouteName() == 'siswa.index' ? 'bg-primary':''}}" href="{{route('siswa.index')}}"><i class="fas fa-user-graduate"></i> Siswa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::currentRouteName() == 'agenda.index' ? 'bg-primary':''}}" href="{{route('agenda.index')}}"><i class="fas fa-calendar-alt"></i> Agenda</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ Route::currentRouteName() == 'role.index' ? 'bg-primary':''}}" href="{{route('role.index')}}"><i class="fas fa-user-shield"></i> Role</a>
             </li>
+            @endif
             <li class="nav-item">
                 <a class="nav-link {{ Route::currentRouteName() == 'absensi.index' ? 'bg-primary':''}}" href="{{route('absensi.index')}}"><i class="fas fa-clipboard-check"></i> Absensi</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::currentRouteName() == 'agenda.index' ? 'bg-primary':''}}" href="{{route('agenda.index')}}"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            </li>
         </ul>
     </div>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="image-container">
-                <img src="https://ebc-didactic.com/wp-content/uploads/2023/01/smk-pusdikhub-cimahi.webp" style="width: 50px;" alt="Logo" class="center-image">
-            </div>
-            <a class="navbar-brand" href="#">SMK PUSDIKHUBAD</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#"><i class="fas fa-home"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-phone-alt"></i> Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
     <!-- Content Area -->
     <div class="content">
@@ -116,6 +120,7 @@
     <!-- Link ke JS Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     
     @yield('script')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

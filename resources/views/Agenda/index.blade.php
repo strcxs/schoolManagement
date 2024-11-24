@@ -4,15 +4,26 @@
 <div class="container">
     <h1 class="text-center mb-4">Manajemen Agenda</h1>
     <!-- Form Tambah Agenda -->
+    @if (Auth::user()->role->nama === "admin")
     <form id="addAgendaForm" class="mt-4 mb-2">
         <div class="row g-3">
             <div class="col-md-4">
-                <label for="guruId" class="form-label">ID Guru</label>
-                <input type="text" id="guruId" name="guru" class="form-control" placeholder="ID Guru" required>
+                <label for="guruId" class="form-label">Guru</label>
+                <select id="guruId" name="guru" class="form-control" required>
+                    <option value="" disabled selected>--select--</option>
+                    @foreach ($gurus as $guru)
+                        <option value="{{$guru->id}}">{{$guru->mapel->nama}} - {{$guru->nama}}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-md-4">
-                <label for="kelasId" class="form-label">ID Kelas</label>
-                <input type="text" id="kelasId" name="kelas" class="form-control" placeholder="ID Kelas" required>
+                <label for="kelasId" class="form-label">Kelas</label>
+                <select id="kelasId" name="kelas" class="form-control" required>
+                    <option value="" disabled selected>--select--</option>
+                    @foreach ($kelass as $kelas)
+                        <option value="{{$kelas->id}}">{{$kelas->nama}}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-md-4">
                 <label for="timeStart" class="form-label">Time Start</label>
@@ -27,6 +38,7 @@
             </div>
         </div>
     </form>
+    @endif
     <hr>
     <!-- Tabel Daftar Agenda dengan DataTables -->
     <div class="table-responsive">
@@ -39,36 +51,43 @@
                     <th>Kelas</th>
                     <th>Time Start</th>
                     <th>Time End</th>
-                    <th>Aksi</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="agendaList">
                 @foreach ($agenda as $x)
-                    <tr style="background-color: {{ $x->status == 1 ? 'rgb(149, 255, 139)' : 'white' }}">
-                        <td>{{$x->guru->NIP}}</td>
-                        <td>{{$x->guru->nama}}</td>
-                        <td>{{$x->guru->mapel->nama}}</td>
-                        <td>{{$x->kelas->nama}}</td>
-                        <td>{{$x->time_start}}</td>
-                        <td>{{$x->time_end}}</td>
-                        <td>
-                            <!-- Edit Button -->
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" 
-                                data-id="{{ $x->id }}" data-guru="{{ $x->guru->id }}" data-kelas="{{ $x->kelas->id }}" data-time_start="{{ $x->time_start }}" data-time_end="{{ $x->time_end }}">
+                <tr style="background-color: {{ $x->status == 1 ? 'rgb(149, 255, 139)' : 'white' }}">
+                    <td>{{$x->guru->NIP}}</td>
+                    <td>{{$x->guru->nama}}</td>
+                    <td>{{$x->guru->mapel->nama}}</td>
+                    <td>{{$x->kelas->nama}}</td>
+                    <td>{{$x->time_start}}</td>
+                    <td>{{$x->time_end}}</td>
+                    <td>
+                        @if (Auth::user()->role->nama === "admin")
+                        <!-- Tombol Edit -->
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" 
+                            data-id="{{ $x->id }}" data-guru="{{ $x->guru->id }}" data-kelas="{{ $x->kelas->id }}" data-time_start="{{ $x->time_start }}" data-time_end="{{ $x->time_end }}">
+                            Edit
+                        </button>
+
+                        <!-- Tombol Hapus -->
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $x->id }}">
+                            Hapus
+                        </button>
+                        @endif
+                        <!-- Tombol Mengajar -->
+                        @if($x->status == 1 && Auth::user()->role->nama != "admin")
+                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-light btn-sm">
                                 Edit
-                            </button>
-
-                            <!-- Delete Button -->
-                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $x->id }}">
-                                Hapus
-                            </button>
-
-                            <!-- Mengajar Button -->
-                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
-                                Mengajar
                             </a>
-                        </td>
-                    </tr>
+                        @else
+                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
+                                @if (Auth::user()->role->nama === "admin") lihat @else Mengajar @endif
+                            </a>
+                        @endif
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -179,9 +198,6 @@
                                         <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
                                             Hapus
                                         </button>
-                                        <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
-                                            Mengajar
-                                        </a>
                                     </td>
                                 </tr>`;
                                 // Tambahkan row baru ke tabel
@@ -285,9 +301,6 @@
                                                 <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
                                                     Hapus
                                                 </button>
-                                                <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
-                                                    Mengajar
-                                                </a>
                                             </td>
                                         </tr>
                                     `;

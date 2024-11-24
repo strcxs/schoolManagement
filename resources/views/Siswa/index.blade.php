@@ -12,7 +12,12 @@
                 <input type="text" id="namaSiswa" name="nama" class="form-control" placeholder="Nama Siswa" required>
             </div>
             <div class="col-md-4">
-                <input type="text" id="kelasSiswa" name="kelas" class="form-control" placeholder="Kelas" required>
+                <select id="kelasSiswa" name="kelas" class="form-control" required>
+                    <option value="" disabled selected>--select--</option>
+                    @foreach ($kelass as $kelas)
+                        <option value="{{$kelas->id}}">{{$kelas->nama}}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-success w-100">Tambah Siswa</button>
