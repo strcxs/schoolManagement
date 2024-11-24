@@ -4,7 +4,11 @@
 <div class="container">
     <h1 class="text-center mb-4">Absensi Kelas</h1>
 
-    <!-- Tabel Daftar Kelas dengan DataTables -->
+    <div class="text-end">
+        <a href="absensi/download" class="btn btn-success btn-sm">
+             Download PDF
+        </a>
+    </div>
     <div class="table-responsive">
         <table id="kelasTable" class="table table-striped table-bordered">
             <thead>

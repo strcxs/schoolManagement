@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Models\guru\Guru;
 use App\Models\Kelas\Kelas;
 use App\Models\Siswa\Siswa;
-use Auth;
 use Illuminate\Http\Request;
 use App\Models\agenda\Agenda;
 use App\Models\Absensi\absensi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class AgendaController extends Controller
@@ -184,5 +185,25 @@ class AgendaController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+    public function generatePdf()
+    {
+        $id_guru = Auth::user()->id_guru; 
+        if (Auth::user()->role->nama === "admin") {
+            $this->data['agenda'] = Agenda::with('kelas')
+                    ->with('guru')
+                    ->get();
+            $this->data['gurus'] = Guru::with('mapel')->get();
+            $this->data['kelass'] = Kelas::get();
+        } else{
+            $this->data['agenda'] = Agenda::with('kelas')
+                    ->with('guru')
+                    ->where('id_guru','=',$id_guru)
+                    ->get();
+        }
+        $pdf = Pdf::loadView('pdf.pdfagenda',$this->data);
+
+        // Download the PDF
+        return $pdf->download('agenda.pdf');
     }
 }

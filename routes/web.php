@@ -55,6 +55,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/edit',[AgendaController::class,'edit'])->name('agenda.edit');
         Route::post('/add',[AgendaController::class,'add'])->name('agenda.add');
         Route::post('/delete',[AgendaController::class,'delete'])->name('agenda.delete');
+
+        Route::get('/download',[AgendaController::class,'generatePdf'])->name('agenda.generatePdf');
+
         
         Route::get('/absensi/{data}',[AgendaController::class,'absensi'])->name('agenda.absensi');
         Route::post('/absensi/save',[AgendaController::class,'save'])->name('agenda.save');
@@ -70,5 +73,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('absensi')->group(function(){
         Route::get('/',[AbsensiController::class,'index'])->name('absensi.index');
         Route::post('/edit',[AbsensiController::class,'edit'])->name('absensi.edit');
+
+        Route::get('/download',[AbsensiController::class,'generatePdf'])->name('absensi.generatePdf');
     });
 });
