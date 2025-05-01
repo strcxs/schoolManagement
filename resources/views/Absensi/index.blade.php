@@ -10,7 +10,7 @@
 </style>
 <div class="container">
     <h1 class="text-center mb-4">Absensi Kelas</h1>
-
+    @if (Auth::user()->role->nama === "admin")
     <div class="text-end mb-2">
         <a href="absensi/download" class="btn btn-success btn-sm">
              Download PDF
@@ -43,6 +43,7 @@
             <a class="btn btn-primary w-100" onclick="applyFilter()">Terapkan Filter</a>
         </div>
     </div>
+    @endif
     <div class="table-responsive">
         <table id="kelasTable" class="table table-striped table-bordered">
             <thead>
@@ -80,9 +81,11 @@
             </tbody>
         </table>
     </div>
+    @if (Auth::user()->role->nama === "admin")
     <div class="container" id="containerChart">
         <canvas id="absensiChart"></canvas>
     </div>
+    @endif
 </div>
 @endsection
 

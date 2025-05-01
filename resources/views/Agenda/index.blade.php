@@ -1,6 +1,13 @@
 @extends('app')
 
 @section('content')
+<style>
+    .btn-disabled {
+        pointer-events: none; /* Menghindari interaksi klik */
+        opacity: 0.6; /* Membuat tombol terlihat pudar */
+        cursor: not-allowed; /* Menampilkan kursor tidak diizinkan */
+    }
+</style>
 <div class="container">
     <h1 class="text-center mb-4">Manajemen Agenda</h1>
     <!-- Form Tambah Agenda -->
@@ -82,7 +89,9 @@
                                 Edit
                             </a>
                         @else
-                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => $x->kelas->id, 'id_agenda' => $x->id]))) }}" class="btn btn-primary btn-sm @if(Auth::user()->role->nama != "admin") btn-mengajar @endif"
+                            data-time-start="{{ $x->time_start }}"
+                            data-time-end="{{ $x->time_end }}">
                                 @if (Auth::user()->role->nama === "admin") lihat @else Mengajar @endif
                             </a>
                         @endif
@@ -388,6 +397,23 @@
                         });
                     }
                 });
+            });
+            const buttons = document.querySelectorAll('.btn-mengajar');
+        
+            // Loop melalui tombol dan cek apakah waktu saat ini berada di luar rentang waktu
+            buttons.forEach(button => {
+                const timeStart = new Date(button.getAttribute('data-time-start').replace(' ', 'T')); // Mengganti spasi menjadi 'T' untuk ISO 8601
+                const timeEnd = new Date(button.getAttribute('data-time-end').replace(' ', 'T')); // Mengganti spasi menjadi 'T' untuk ISO 8601
+                const currentTime = new Date();
+                
+                // Jika waktu saat ini sebelum time_start atau setelah time_end, disable tombol
+                if (currentTime < timeStart || currentTime > timeEnd) {
+                    button.classList.add('btn-disabled');  // Menambahkan kelas .btn-disabled
+                    button.style.pointerEvents = 'none';   // Menonaktifkan interaksi
+                } else {
+                    button.classList.remove('btn-disabled'); // Menghapus kelas .btn-disabled
+                    button.style.pointerEvents = '';         // Mengaktifkan interaksi kembali
+                }
             });
         });
     </script>
