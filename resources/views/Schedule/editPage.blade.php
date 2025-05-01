@@ -4,6 +4,16 @@
 <div class="container">
     <h1 class="text-center mb-4">Manajemen Agenda</h1>
     <hr>
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <select id="id_guru" name="guru" class="form-control" required>
+                <option value="" disabled selected>--select guru--</option>
+                @foreach ($gurus as $guru)
+                    <option value="{{$guru->id}}" @if ($guru->id == $id_guruSelected) selected @endif>{{$guru->nama}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
     <!-- Tabel Daftar Agenda dengan DataTables -->
     <div class="table-responsive">
         <table id="scheduleTable" class="table table-striped table-bordered">
@@ -86,6 +96,7 @@
                 });
                 var actionUrl = "{{ route('schedule.save') }}";
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                var id_guru = $('#id_guru').val();
                 
                 $.ajax({
                     type: 'POST',
@@ -93,7 +104,8 @@
                     data: {
                         _token : csrfToken,
                         id_schedule: {{ $schedule_id }}, // Mendapatkan id_agenda dari variabel $agenda
-                        kehadiranData: kehadiranData
+                        kehadiranData: kehadiranData,
+                        id_guru: id_guru
                     },
                     success: function(response) {
                         if(response.status == 200) {

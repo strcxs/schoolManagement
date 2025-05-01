@@ -28,6 +28,8 @@ class ScheduleController extends Controller
     public function editSchedule($data){
         $id_mapel = Scheduler::select('id_mapel')->where('id',$data)->first()->id_mapel;
         $this->data['schedule_id'] = $data;
+        $this->data['gurus'] = Guru::get();
+        $this->data['id_guruSelected'] = Scheduler::select('id_guru')->where('id',$data)->first()->id_guru;
         if (Auth::user()->role->nama === "admin") {
             $this->data['agenda'] = Agenda::where('id_mapel', $id_mapel)
             ->where(function ($query) use ($data) {
@@ -51,6 +53,9 @@ class ScheduleController extends Controller
                     $agenda->id_schedule = $request->get('id_schedule');
                     $agenda->save();
                 }
+                $schedule = Scheduler::find($request->get('id_schedule'));
+                $schedule->id_guru = $request->get('id_guru');
+                $schedule->save();
             }
             DB::commit();
             return response()->json([
