@@ -1,6 +1,13 @@
 @extends('app')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    #containerChart {
+        size: 2px;
+        margin: 50px auto;
+    }
+</style>
 <div class="container">
     <h1 class="text-center mb-4">Absensi Kelas</h1>
 
@@ -73,6 +80,9 @@
             </tbody>
         </table>
     </div>
+    <div class="container" id="containerChart">
+        <canvas id="absensiChart"></canvas>
+    </div>
 </div>
 @endsection
 
@@ -127,5 +137,103 @@
             const queryParams = `?id_kelas=${idKelas}&id_guru=${idGuru}`;
             window.location.href = baseUrl + queryParams;
         }
+    </script>
+    
+    <script>
+        const dataGraph = @json($data_graph);
+        const siswaCount = @json($siswaCount);
+        const siswaFull = [];
+        const dataLabel = [];
+        const izin = [];
+        const sakit = [];
+        const tidak_hadir = [];
+
+        dataGraph.forEach(data => {
+            dataLabel.push(data.kelas_nama);
+            izin.push(data.izin);
+            sakit.push(data.sakit);
+            tidak_hadir.push(data.tidak_hadir);
+        });
+
+        const result = izin.map((value, index) => value + sakit[index] + tidak_hadir[index]);
+        // siswaCount = siswaCount-result
+        siswaCount.forEach(data => {
+            dataGraph.forEach(siswa => {
+                if (data.id_kelas == siswa.kelas_id) {
+                    siswaFull.push(data.total)
+                }
+            });
+        });
+
+        const resultSiswa = siswaFull.map((value, index) => value - result[index]);
+
+        console.log(resultSiswa);
+
+
+        const data = {
+            labels: dataLabel, // Dua label untuk dua bar
+            datasets: [
+                {
+                    label: 'Hadir',
+                    data: resultSiswa, // Jumlah mahasiswa hadir untuk Kelas A dan B
+                    backgroundColor: '#4CAF50', // Warna untuk hadir
+                },
+                {
+                    label: 'Sakit',
+                    data: sakit, // Jumlah mahasiswa sakit untuk Kelas A dan B
+                    backgroundColor: '#f44336', // Warna untuk sakit
+                },
+                {
+                    label: 'Izin',
+                    data: izin, // Jumlah mahasiswa izin untuk Kelas A dan B
+                    backgroundColor: '#ff9800', // Warna untuk izin
+                },
+                {
+                    label: 'Tidak Hadir',
+                    data: tidak_hadir, // Jumlah mahasiswa tidak hadir untuk Kelas A dan B
+                    backgroundColor: '#9E9E9E', // Warna untuk tidak hadir
+                }
+            ]
+        };
+    
+        const config = {
+            type: 'bar', // Jenis grafik bar
+            data: data,
+            options: {
+                responsive: true,
+                indexAxis: 'y', // Membuat grafik bar horizontal
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.raw + ' mahasiswa';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true, // Menambahkan tumpukan pada bar
+                        beginAtZero: true,
+                    },
+                    y: {
+                        stacked: true, // Menambahkan tumpukan pada bar
+                        beginAtZero: true,
+                    }
+                },
+                elements: {
+                    bar: {
+                        borderWidth: 1
+                    }
+                }
+            }
+        };
+    
+        // Menampilkan chart
+        const ctx = document.getElementById('absensiChart').getContext('2d');
+        const absensiChart = new Chart(ctx, config);
     </script>
 @endsection

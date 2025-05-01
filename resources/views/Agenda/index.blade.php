@@ -12,7 +12,7 @@
                 <select id="mapelId" name="mapel" class="form-control" required>
                     <option value="" disabled selected>--select--</option>
                     @foreach ($mapels as $mapel)
-                        <option value="{{$mapel->id}}">{{$mapel->nama}} - {{$mapel->nama}}</option>
+                        <option value="{{$mapel->id}}">{{$mapel->nama}}</option>
                     @endforeach
                 </select>
             </div>

@@ -28,7 +28,7 @@ class ScheduleController extends Controller
     public function editSchedule($data){
         $id_mapel = Scheduler::select('id_mapel')->where('id',$data)->first()->id_mapel;
         $this->data['schedule_id'] = $data;
-        $this->data['gurus'] = Guru::get();
+        $this->data['gurus'] = Guru::where('id_mapel',$id_mapel)->get();
         $this->data['id_guruSelected'] = Scheduler::select('id_guru')->where('id',$data)->first()->id_guru;
         $this->data['mapel'] = Scheduler::where('id',$data)->with('mapel')->first();
         if (Auth::user()->role->nama === "admin") {

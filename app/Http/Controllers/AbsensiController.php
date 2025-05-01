@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Models\guru\Guru;
 use App\Models\Kelas\Kelas;
-use Auth;
+use App\Models\Siswa\Siswa;
 use Illuminate\Http\Request;
 use App\Models\Absensi\Absensi;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -49,8 +51,30 @@ class AbsensiController extends Controller
         } else {
             $results = $this->getAbsensiData($id_guru,$id_kelas); // For teacher, fetch absensi data for their specific id_guru
         }
+        $this->data['data_graph'] = Absensi::selectRaw(
+            'kelas.id as kelas_id,
+            kelas.nama as kelas_nama, 
+            COUNT(DISTINCT CASE WHEN izin IS NOT NULL THEN izin END) as izin, 
+            COUNT(DISTINCT CASE WHEN sakit IS NOT NULL THEN sakit END) as sakit, 
+            COUNT(DISTINCT CASE WHEN tidak_hadir IS NOT NULL THEN tidak_hadir END) as tidak_hadir,
+            COUNT(DISTINCT siswa.id) as jumlah_siswa'
+        )
+        ->join('agenda', 'agenda.id', '=', 'absensi.id_agenda') // Menggabungkan tabel 'absensi' dan 'agenda'
+        ->leftJoin('schedule', 'agenda.id_schedule', '=', 'schedule.id')
+        ->leftJoin('kelas', 'agenda.id_kelas', '=', 'kelas.id') // Gabungkan tabel kelas untuk mendapatkan nama kelas
+        ->leftJoin('siswa', 'siswa.id_kelas', '=', 'kelas.id')
+        ->groupBy('kelas.id', 'kelas.nama') // Mengelompokkan berdasarkan ID kelas dan nama kelas
+        ->get();
+
+
+
+
         $this->data['kelasList'] = Kelas::get();
         $this->data['guruList'] = Guru::get();
+        $this->data['siswaCount'] = Siswa::select('id_kelas', DB::raw('count(*) as total'))
+        ->groupBy('id_kelas')
+        ->get();
+
 
         $this->data['absensi'] = $results;
         
