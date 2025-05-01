@@ -63,8 +63,10 @@ class AbsensiController extends Controller
         ->leftJoin('schedule', 'agenda.id_schedule', '=', 'schedule.id')
         ->leftJoin('kelas', 'agenda.id_kelas', '=', 'kelas.id') // Gabungkan tabel kelas untuk mendapatkan nama kelas
         ->leftJoin('siswa', 'siswa.id_kelas', '=', 'kelas.id')
+        // ->whereBetween('agenda.time_start', [['2022-10-01', '2026-01-01']]) // Filter rentang waktu
         ->groupBy('kelas.id', 'kelas.nama') // Mengelompokkan berdasarkan ID kelas dan nama kelas
         ->get();
+
 
 
 
