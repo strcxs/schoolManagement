@@ -30,6 +30,7 @@ class ScheduleController extends Controller
         $this->data['schedule_id'] = $data;
         $this->data['gurus'] = Guru::get();
         $this->data['id_guruSelected'] = Scheduler::select('id_guru')->where('id',$data)->first()->id_guru;
+        $this->data['mapel'] = Scheduler::where('id',$data)->with('mapel')->first();
         if (Auth::user()->role->nama === "admin") {
             $this->data['agenda'] = Agenda::where('id_mapel', $id_mapel)
             ->where(function ($query) use ($data) {

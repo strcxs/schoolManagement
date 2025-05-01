@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-center mb-4">Manajemen Agenda</h1>
+    <h1 class="text-center mb-4">{{$mapel->mapel->nama}}</h1>
     <hr>
     <div class="row g-3 mb-3">
         <div class="col-md-4">
