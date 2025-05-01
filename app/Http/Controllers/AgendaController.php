@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\mapel\Mapel;
 use Auth;
 use App\Models\guru\Guru;
 use App\Models\Kelas\Kelas;
@@ -21,7 +22,7 @@ class AgendaController extends Controller
         if (Auth::user()->role->nama === "admin") {
             $this->data['agenda'] = Agenda::with(['kelas','schedule','mapel'])
                     ->get();
-            $this->data['gurus'] = Guru::with('mapel')->get();
+            $this->data['mapels'] = Mapel::get();
             $this->data['kelass'] = Kelas::get();
         } else{
             $this->data['agenda'] = Agenda::with(['kelas', 'schedule', 'mapel'])
@@ -97,14 +98,13 @@ class AgendaController extends Controller
 
         try {
             $agenda = new Agenda();
-            $agenda->id_guru = $request->input('guru');
+            $agenda->id_mapel = $request->input('mapel');
             $agenda->id_kelas = $request->input('kelas');
             $agenda->time_start = $request->input('time_start');
             $agenda->time_end = $request->input('time_end');
             $agenda->save();
             
-            $agenda = Agenda::with('kelas')
-            ->with('guru')
+            $agenda = Agenda::with(['kelas','mapel'])
             ->find($agenda->id);
             DB::commit();
 

@@ -8,11 +8,11 @@
     <form id="addAgendaForm" class="mt-4 mb-2">
         <div class="row g-3">
             <div class="col-md-4">
-                <label for="guruId" class="form-label">Guru</label>
-                <select id="guruId" name="guru" class="form-control" required>
+                <label for="mapelId" class="form-label">Mata Pelajaran</label>
+                <select id="mapelId" name="mapel" class="form-control" required>
                     <option value="" disabled selected>--select--</option>
-                    @foreach ($gurus as $guru)
-                        <option value="{{$guru->id}}">{{$guru->mapel->nama}} - {{$guru->nama}}</option>
+                    @foreach ($mapels as $mapel)
+                        <option value="{{$mapel->id}}">{{$mapel->nama}} - {{$mapel->nama}}</option>
                     @endforeach
                 </select>
             </div>
@@ -194,9 +194,9 @@
                                 console.log(response.data);
                                 
                                 var newRow = `<tr style="background-color: ${response.data.status == 1 ? 'green' : 'white'}">
-                                    <td>${response.data.guru.NIP}</td>
-                                    <td>${response.data.guru.nama}</td>
-                                    <td>${response.data.guru.mapel.nama}</td>
+                                    <td>${'-'}</td>
+                                    <td>${'-'}</td>
+                                    <td>${response.data.mapel.nama}</td>
                                     <td>${response.data.kelas.nama}</td>
                                     <td>${response.data.time_start}</td>
                                     <td>${response.data.time_end}</td>
@@ -208,6 +208,9 @@
                                         <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${response.data.id}">
                                             Hapus
                                         </button>
+                                        <a href="{{ route('agenda.absensi', base64_encode(json_encode(['id_kelas' => `+response.data.kelas.id+`, 'id_agenda' => `+response.data.id+`]))) }}" class="btn btn-primary btn-sm">
+                                            @if (Auth::user()->role->nama === "admin") lihat @else Mengajar @endif
+                                        </a>
                                     </td>
                                 </tr>`;
                                 // Tambahkan row baru ke tabel
