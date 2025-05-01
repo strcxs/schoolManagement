@@ -83,13 +83,23 @@ class AbsensiController extends Controller
 
     public function generatePdf()
     {
+        $id_kelas = request()->get('id_kelas');
         $id_guru = Auth::user()->id_guru;
-        
+        // dd($this->getAbsensiData());
         if (Auth::user()->role->nama === "admin") {
-            $results = $this->getAbsensiData(); // For admin, fetch all absensi data
+            $id_guru = request()->get('id_guru');
+            $results = $this->getAbsensiData($id_guru,$id_kelas); // For admin, fetch all absensi data
         } else {
-            $results = $this->getAbsensiData($id_guru); // For teacher, fetch absensi data for their specific id_guru
+            $results = $this->getAbsensiData($id_guru,$id_kelas); // For teacher, fetch absensi data for their specific id_guru
         }
+
+        $this->data['kelasList'] = Kelas::get();
+        $this->data['guruList'] = Guru::get();
+        $this->data['siswaCount'] = Siswa::select('id_kelas', DB::raw('count(*) as total'))
+        ->groupBy('id_kelas')
+        ->get();
+
+
         $this->data['absensi'] = $results;
         // Pass the results directly to the PDF view
         $pdf = Pdf::loadView('pdf.pdfabsensi',$this->data);

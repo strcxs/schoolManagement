@@ -82,8 +82,8 @@
                     <td style="border: 1px solid #000;">{{$x->agenda->kelas->nama}}</td>
                     <td style="border: 1px solid #000;">{{$x->time_start}}</td>
                     <td style="border: 1px solid #000;">{{$x->time_end}}</td>
-                    <td style="border: 1px solid #000;">{{$x->agenda->guru->mapel->nama}}</td>
-                    <td style="border: 1px solid #000;">{{$x->agenda->guru->nama}}</td>
+                    <td style="border: 1px solid #000;">{{$x->agenda->schedule->guru->mapel->nama}}</td>
+                    <td style="border: 1px solid #000;">{{$x->agenda->schedule->guru->nama}}</td>
                     <td style="border: 1px solid #000;">{{$x->izin}}</td>
                     <td style="border: 1px solid #000;">{{$x->sakit}}</td>
                     <td style="border: 1px solid #000;">{{$x->tidak_hadir}}</td>

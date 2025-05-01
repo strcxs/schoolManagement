@@ -10,12 +10,12 @@
 </style>
 <div class="container">
     <h1 class="text-center mb-4">Absensi Kelas</h1>
-    @if (Auth::user()->role->nama === "admin")
     <div class="text-end mb-2">
         <a href="absensi/download" class="btn btn-success btn-sm">
              Download PDF
         </a>
     </div>
+    @if (Auth::user()->role->nama === "admin")
     <div class="row">
         <div class="col-md-4">
             <select name="id_kelas" id="id_kelas" class="form-select">
@@ -177,11 +177,6 @@
             labels: dataLabel, // Dua label untuk dua bar
             datasets: [
                 {
-                    label: 'Hadir',
-                    data: resultSiswa, // Jumlah mahasiswa hadir untuk Kelas A dan B
-                    backgroundColor: '#4CAF50', // Warna untuk hadir
-                },
-                {
                     label: 'Sakit',
                     data: sakit, // Jumlah mahasiswa sakit untuk Kelas A dan B
                     backgroundColor: '#f44336', // Warna untuk sakit
@@ -195,6 +190,11 @@
                     label: 'Tidak Hadir',
                     data: tidak_hadir, // Jumlah mahasiswa tidak hadir untuk Kelas A dan B
                     backgroundColor: '#9E9E9E', // Warna untuk tidak hadir
+                },
+                {
+                    label: 'Hadir',
+                    data: resultSiswa, // Jumlah mahasiswa hadir untuk Kelas A dan B
+                    backgroundColor: '#4CAF50', // Warna untuk hadir
                 }
             ]
         };
