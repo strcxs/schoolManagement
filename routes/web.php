@@ -9,6 +9,7 @@ use App\Http\Controllers\MapelController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -75,5 +76,18 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/edit',[AbsensiController::class,'edit'])->name('absensi.edit');
 
         Route::get('/download',[AbsensiController::class,'generatePdf'])->name('absensi.generatePdf');
+    });
+
+    Route::prefix('schedule')->group(function(){
+        Route::get('/',[ScheduleController::class,'index'])->name('schedule.index');
+        Route::get('/{data}',[ScheduleController::class,'editSchedule'])->name('schedule.editSchedule');
+        Route::post('/schedule/save',[ScheduleController::class,'save'])->name('schedule.save');
+        Route::post('/delete',[ScheduleController::class,'delete'])->name('schedule.delete');
+        Route::post('/add',[ScheduleController::class,'add'])->name('schedule.add');
+        // Route::post('/edit',[ScheduleController::class,'edit'])->name('schedule.edit');
+
+        // Route::get('/download',[ScheduleController::class,'generatePdf'])->name('schedule.generatePdf');
+
+        
     });
 });

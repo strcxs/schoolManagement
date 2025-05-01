@@ -3,6 +3,7 @@
 namespace App\Models\Absensi;
 
 use App\Models\agenda\Agenda;
+use App\Models\Schedule\Scheduler;
 use Illuminate\Database\Eloquent\Model;
 
 class absensi extends Model
@@ -11,6 +12,6 @@ class absensi extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
     public function agenda(){
-        return $this->belongsTo(Agenda::class, 'id_agenda', 'id')->with('kelas')->with('guru');
+        return $this->belongsTo(Agenda::class, 'id_agenda', 'id')->with(['kelas','schedule']);
     }
 }

@@ -4,10 +4,37 @@
 <div class="container">
     <h1 class="text-center mb-4">Absensi Kelas</h1>
 
-    <div class="text-end">
+    <div class="text-end mb-2">
         <a href="absensi/download" class="btn btn-success btn-sm">
              Download PDF
         </a>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <select name="id_kelas" id="id_kelas" class="form-select">
+                <option value="">-- Semua Kelas --</option>
+                @foreach ($kelasList as $kelas)
+                    <option value="{{ $kelas->id }}" {{ request('id_kelas') == $kelas->id ? 'selected' : '' }}>
+                        {{ $kelas->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    
+        <div class="col-md-4">
+            <select name="id_guru" id="id_guru" class="form-select">
+                <option value="">-- Semua Guru --</option>
+                @foreach ($guruList as $guru)
+                    <option value="{{ $guru->id }}" {{ request('id_guru') == $guru->id ? 'selected' : '' }}>
+                        {{ $guru->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    
+        <div class="col-md-4">
+            <a class="btn btn-primary w-100" onclick="applyFilter()">Terapkan Filter</a>
+        </div>
     </div>
     <div class="table-responsive">
         <table id="kelasTable" class="table table-striped table-bordered">
@@ -30,8 +57,8 @@
                     <td>{{$x->agenda->kelas->nama}}</td>
                     <td>{{$x->time_start}}</td>
                     <td>{{$x->time_end}}</td>
-                    <td>{{$x->agenda->guru->mapel->nama}}</td>
-                    <td>{{$x->agenda->guru->nama}}</td>
+                    <td>{{$x->agenda->schedule->guru->mapel->nama}}</td>
+                    <td>{{$x->agenda->schedule->guru->nama}}</td>
 
                     <td>{{$x->izin}}</td>
                     <td>{{$x->sakit}}</td>
@@ -93,5 +120,12 @@
                 }
             });
         });
+        function applyFilter() {
+            const idKelas = document.getElementById('id_kelas').value;
+            const idGuru = document.getElementById('id_guru').value;
+            const baseUrl = '{{ url('absensi') }}';
+            const queryParams = `?id_kelas=${idKelas}&id_guru=${idGuru}`;
+            window.location.href = baseUrl + queryParams;
+        }
     </script>
 @endsection

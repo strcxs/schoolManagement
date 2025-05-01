@@ -101,6 +101,9 @@
             <li class="nav-item">
                 <a class="nav-link {{ Route::currentRouteName() == 'role.index' ? 'bg-primary':''}}" href="{{route('role.index')}}"><i class="fas fa-user-shield"></i> Role</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::currentRouteName() == 'schedule.index' ? 'bg-primary':''}}" href="{{route('schedule.index')}}"><i class="fas fa-calendar-alt"></i> Schedule</a>
+            </li>
             @endif
             <li class="nav-item">
                 <a class="nav-link {{ Route::currentRouteName() == 'absensi.index' ? 'bg-primary':''}}" href="{{route('absensi.index')}}"><i class="fas fa-clipboard-check"></i> Absensi</a>

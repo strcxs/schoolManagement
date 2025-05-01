@@ -57,17 +57,17 @@
             <tbody id="agendaList">
                 @foreach ($agenda as $x)
                 <tr style="background-color: {{ $x->status == 1 ? 'rgb(149, 255, 139)' : 'white' }}">
-                    <td>{{$x->guru->NIP}}</td>
-                    <td>{{$x->guru->nama}}</td>
-                    <td>{{$x->guru->mapel->nama}}</td>
+                    <td>{{$x->schedule->guru->NIP ?? '-'}}</td>
+                    <td>{{$x->schedule->guru->nama ?? '-'}}</td>
+                    <td>{{$x->mapel->nama ?? '-'}}</td>
                     <td>{{$x->kelas->nama}}</td>
-                    <td>{{$x->time_start}}</td>
-                    <td>{{$x->time_end}}</td>
+                    <td>{{ \Carbon\Carbon::parse($x->time_start)->translatedFormat('l, j F Y H:i') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($x->time_end)->translatedFormat('l, j F Y H:i') }}</td>
                     <td>
                         @if (Auth::user()->role->nama === "admin")
                         <!-- Tombol Edit -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" 
-                            data-id="{{ $x->id }}" data-guru="{{ $x->guru->id }}" data-kelas="{{ $x->kelas->id }}" data-time_start="{{ $x->time_start }}" data-time_end="{{ $x->time_end }}">
+                            data-id="{{ $x->id }}" data-guru="{{ $x->guru->id ?? '-' }}" data-kelas="{{ $x->kelas->id }}" data-time_start="{{ $x->time_start }}" data-time_end="{{ $x->time_end }}">
                             Edit
                         </button>
 
@@ -107,13 +107,13 @@
                     @csrf
                     @method('POST')
                     <div class="form-group m-2">
-                        <label for="guruId">Guru</label>
+                        {{-- <label for="guruId">Guru</label>
                         <select id="guruId" name="guru" class="form-control" required>
                             <option value="" disabled selected>--select--</option>
                             @foreach ($gurus as $guru)
                                 <option value="{{$guru->id}}">{{$guru->mapel->nama}} - {{$guru->nama}}</option>
                             @endforeach
-                        </select>
+                        </select> --}}
                     </div>
                     <div class="form-group m-2">
                         <label for="kelasId">Kelas</label>

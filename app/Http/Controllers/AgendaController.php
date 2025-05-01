@@ -19,16 +19,16 @@ class AgendaController extends Controller
     public function index(){
         $id_guru = Auth::user()->id_guru; 
         if (Auth::user()->role->nama === "admin") {
-            $this->data['agenda'] = Agenda::with('kelas')
-                    ->with('guru')
+            $this->data['agenda'] = Agenda::with(['kelas','schedule','mapel'])
                     ->get();
             $this->data['gurus'] = Guru::with('mapel')->get();
             $this->data['kelass'] = Kelas::get();
         } else{
-            $this->data['agenda'] = Agenda::with('kelas')
-                    ->with('guru')
-                    ->where('id_guru','=',$id_guru)
-                    ->get();
+            $this->data['agenda'] = Agenda::with(['kelas', 'schedule', 'mapel'])
+            ->whereHas('schedule', function ($query) use ($id_guru) {
+                $query->where('id_guru', $id_guru);
+            })
+            ->get();
             $this->data['gurus'] = Guru::with('mapel')->get();
             $this->data['kelass'] = Kelas::get();
         }
@@ -158,7 +158,7 @@ class AgendaController extends Controller
             $agenda = Agenda::find($request->id);
             if ($agenda->status != 1) {
                 if ($agenda) {
-                    $agenda->id_guru = $request->input('guru');
+                    // $agenda->id_guru = $request->input('guru');
                     $agenda->id_kelas = $request->input('kelas');
                     $agenda->time_start = $request->input('time_start');
                     $agenda->time_end = $request->input('time_end');
