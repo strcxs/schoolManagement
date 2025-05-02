@@ -164,8 +164,7 @@ class AgendaController extends Controller
                     $agenda->time_end = $request->input('time_end');
                     $agenda->save();
     
-                    $agenda = Agenda::with('kelas')
-                    ->with('guru')
+                    $agenda = Agenda::with(['kelas','schedule','mapel'])
                     ->find($agenda->id);
     
                     DB::commit();
