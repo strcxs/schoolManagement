@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AgendaImport;
 use App\Models\mapel\Mapel;
 use Auth;
 use App\Models\guru\Guru;
@@ -12,6 +13,7 @@ use App\Models\agenda\Agenda;
 use App\Models\Absensi\absensi;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AgendaController extends Controller
 {
@@ -34,6 +36,20 @@ class AgendaController extends Controller
             $this->data['kelass'] = Kelas::get();
         }
         return view('agenda.index', $this->data);
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        Excel::import(
+            new AgendaImport,
+            $request->file('file')
+        );
+
+        return back()->with('success', 'Data agenda berhasil diimport.');
     }
 
     public function absensi($data){

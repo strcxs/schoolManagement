@@ -13,6 +13,19 @@ class Agenda extends Model
     protected $table = 'agenda';
     protected $primaryKey = 'id';
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_kelas',
+        'id_mapel',
+        'time_start',
+        'time_end',
+    ];
+
+    protected $casts = [
+        'time_start' => 'datetime',
+        'time_end'   => 'datetime',
+    ];
+    
     public function kelas(){
         return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
     }

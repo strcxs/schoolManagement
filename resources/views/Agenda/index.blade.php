@@ -45,6 +45,28 @@
             </div>
         </div>
     </form>
+    <div class="col-md-4 mt-5">
+        <form action="{{ route('agenda.import') }}"
+            method="POST"
+            enctype="multipart/form-data">
+
+            @csrf
+
+            <div class="mb-2">
+                <input
+                    type="file"
+                    name="file"
+                    class="form-control"
+                    accept=".xlsx,.xls,.csv"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">
+                Import Excel
+            </button>
+        </form>
+    </div>
     @endif
     <hr>
     <!-- Tabel Daftar Agenda dengan DataTables -->

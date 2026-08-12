@@ -58,10 +58,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/delete',[AgendaController::class,'delete'])->name('agenda.delete');
 
         Route::get('/download',[AgendaController::class,'generatePdf'])->name('agenda.generatePdf');
-
+        
+        Route::get('/import',[AgendaController::class,'generatePdf'])->name('agenda.generatePdf');
         
         Route::get('/absensi/{data}',[AgendaController::class,'absensi'])->name('agenda.absensi');
-        Route::post('/absensi/save',[AgendaController::class,'save'])->name('agenda.save');
+        Route::post('/absensi/save',[AgendaController::class,'importExcel'])->name('agenda.import');
     });
 
     Route::prefix('role')->group(function(){
